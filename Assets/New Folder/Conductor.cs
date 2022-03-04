@@ -30,7 +30,7 @@ public class Conductor : MonoBehaviour
 
     public int currentBeatNumber, previousBeatNumber;
 
-    float timer = 0;
+    public float timer = 0;
 
     public float beatTime = 0;
 
@@ -66,7 +66,7 @@ public class Conductor : MonoBehaviour
 
         currentBeatNumber = (int)songPositionInBeats;
 
-        if(currentBeatNumber == previousBeatNumber + 1)
+        if(currentBeatNumber > previousBeatNumber)
         {
             Debug.Log("beat");
             beatTime = Time.time;
@@ -92,9 +92,9 @@ public class Conductor : MonoBehaviour
 
         timeDifference = timer - beatTime;
 
-        Debug.Log(timeDifference);
+        //Debug.Log(timeDifference);
 
-        if(timeDifference < 0.35f)
+        if(timeDifference < 0.35f || timeDifference > 0.64f)
         {
             Debug.Log("ON BEAT");
         }
@@ -102,6 +102,14 @@ public class Conductor : MonoBehaviour
         {
             Debug.Log("OFF BEAT");
         }
+
+        //if(timeDifference > 0.6f)
+        //{
+        //    Debug.Log(timer);
+        //    Debug.Log(beatTime);
+
+        //    Debug.Break();
+        //}
     }
 
     IEnumerator CheckMissedBeat()
