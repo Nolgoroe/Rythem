@@ -18,6 +18,11 @@ public class detectHitWeapon : MonoBehaviour
             {
                 other.GetComponent<Dummy>().TakeMeleeDamage(2 + PlayerController.instance.stats.attackPower);
             }
+
+            if (other.CompareTag("puzzle cube"))
+            {
+                other.GetComponent<PuzzleCube>().DoAction();
+            }
         }
         else
         {
