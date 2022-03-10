@@ -125,4 +125,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 5200565680879584133}
   bulletSpeed: 20
+  enemyBulletSpeed: 7
   lifeTime: 2

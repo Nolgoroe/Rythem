@@ -27,7 +27,6 @@ public class Conductor : MonoBehaviour
     //The offset to the first beat of the song in seconds
     public float firstBeatOffset;
 
-
     public int currentBeatNumber, previousBeatNumber;
 
     public float timer = 0;
@@ -37,6 +36,25 @@ public class Conductor : MonoBehaviour
     public float timeDifference = 0;
 
     public static bool tookAction = false;
+
+
+    public Dummy[] allEnemies;
+
+
+    public int successBeatCount;
+
+    public int beatsShownInAdvance;
+
+    public GameObject beatLinePrefabRight;
+    public GameObject beatLinePrefabLeft;
+
+    public Transform originForBeatLineRight;
+    public Transform originForBeatLineLeft;
+    public Transform targetForBeatLine;
+
+    public bool twoSided;
+
+    //public Transform beatParent;
 
     private void Awake()
     {
@@ -68,18 +86,35 @@ public class Conductor : MonoBehaviour
 
         if(currentBeatNumber > previousBeatNumber)
         {
+            InstantiateBeatLine();
+
             Debug.Log("beat");
             beatTime = Time.time;
             previousBeatNumber = currentBeatNumber;
+
+            //if(currentBeatNumber > 1)
+            //{
+            //    InstantiateBeatLine();
+            //}
+
             StartCoroutine(CheckMissedBeat());
 
+            foreach (Dummy d in allEnemies)
+            {
+                if (d.isMelee && !d.isStunned)
+                {
+                    d.CheckCanAttackPlayer();
+                }
+
+                if (d.isRange && !d.isStunned)
+                {
+                    d.CheckCanAttackPlayerRange();
+                }
+            }
         }
 
-        // determine how many seconds since the song started
         //determine how many beats since the song started
         songPositionInBeats = songPosition / secPerBeat;
-
-
 
         //Debug.Log((int)songPositionInBeats);
     }
@@ -97,10 +132,18 @@ public class Conductor : MonoBehaviour
         if(timeDifference < 0.35f || timeDifference > 0.64f)
         {
             Debug.Log("ON BEAT");
+            successBeatCount++;
+            
+            if(successBeatCount % 10 == 0)
+            {
+                PlayerController.instance.AddAttackPower();
+            }
         }
         else
         {
             Debug.Log("OFF BEAT");
+            PlayerController.instance.ResetAttackPower();
+            successBeatCount = 0;
         }
 
         //if(timeDifference > 0.6f)
@@ -119,8 +162,26 @@ public class Conductor : MonoBehaviour
         if (!tookAction)
         {
             Debug.Log("MISSED BEAT");
+            successBeatCount = 0;
+            PlayerController.instance.ResetAttackPower();
         }
 
         tookAction = false;
+    }
+
+
+    public void InstantiateBeatLine()
+    {
+        Instantiate(beatLinePrefabRight, originForBeatLineRight);
+
+        if (twoSided)
+        {
+            Instantiate(beatLinePrefabLeft, originForBeatLineLeft);
+        }
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
